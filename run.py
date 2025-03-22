@@ -1,18 +1,45 @@
+import subprocess
+import webbrowser
 import os
+import time
 
-# Get current directory
-current_dir = os.getcwd()
+# Paths
+backend_path = "gui/backend"
+frontend_path = "gui/frontend"
+venv_activate = os.path.join(backend_path, "venv", "bin", "activate")
 
-# Define expected paths
-backend_path = os.path.join(current_dir, "backend")
-frontend_path = os.path.join(current_dir, "frontend")
+# Start FastAPI Backend with venv
+print("Starting FastAPI backend...")
+backend_process = subprocess.Popen(
+    f"source {venv_activate} && uvicorn server:app --host 0.0.0.0 --port 8000 --reload",
+    cwd=backend_path,
+    shell=True,
+    executable="/bin/bash",  # Ensures Bash is used for sourcing venv
+    stdout=subprocess.PIPE,
+    stderr=subprocess.PIPE
+)
 
-# Print paths
-print("Current Directory:", current_dir)
-print("Backend Path:", backend_path)
-print("Frontend Path:", frontend_path)
+# Start Frontend
+print("Starting frontend...")
+frontend_process = subprocess.Popen(
+    ["npm", "run", "dev"],
+    cwd=frontend_path,
+    stdout=subprocess.PIPE,
+    stderr=subprocess.PIPE
+)
 
-# Check if directories exist
-print("\nChecking if directories exist:")
-print(f"Backend exists: {'✅ Yes' if os.path.exists(backend_path) else '❌ No'}")
-print(f"Frontend exists: {'✅ Yes' if os.path.exists(frontend_path) else '❌ No'}")
+# Wait for frontend to start (adjust if needed)
+time.sleep(5)
+
+# Open in browser
+print("Opening frontend in browser...")
+webbrowser.open("http://localhost:5173")
+
+# Keep processes running
+try:
+    backend_process.wait()
+    frontend_process.wait()
+except KeyboardInterrupt:
+    print("\nShutting down servers...")
+    backend_process.terminate()
+    frontend_process.terminate()
