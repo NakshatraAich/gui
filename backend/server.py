@@ -14,7 +14,7 @@ app.add_middleware(
     allow_headers=["*"],  # Allow all headers
 )
 
-SERIAL_PORT = "COM6"
+SERIAL_PORT = "/dev/ttyUSB0"
 BAUD_RATE = 9600
 ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
 
