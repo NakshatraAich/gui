@@ -2,12 +2,13 @@ import subprocess
 import os
 import time
 import webbrowser
+import signal
 
 # Define absolute paths
 project_root = os.path.expanduser("~/gui")
 backend_path = os.path.join(project_root, "backend")
 frontend_path = os.path.join(project_root, "frontend")
-venv_path = os.path.join(backend_path, "venv", "bin", "activate")
+uvicorn_path = os.path.join(backend_path, "venv", "bin", "uvicorn")
 
 # Ensure paths exist
 if not os.path.exists(backend_path):
@@ -18,13 +19,11 @@ if not os.path.exists(frontend_path):
     print(f"❌ Error: Frontend path '{frontend_path}' not found!")
     exit(1)
 
-# Start FastAPI backend (with virtual environment)
+# Start FastAPI backend
 print("🚀 Starting FastAPI backend...")
 backend_process = subprocess.Popen(
-    f"source {venv_path} && uvicorn server:app --host 0.0.0.0 --port 8000 --reload",
-    cwd=backend_path,
-    shell=True,
-    executable="/bin/bash"
+    [uvicorn_path, "server:app", "--host", "0.0.0.0", "--port", "8000", "--reload"],
+    cwd=backend_path
 )
 
 # Start frontend
@@ -39,6 +38,16 @@ time.sleep(5)
 print("🌍 Opening http://localhost:5173 in the browser...")
 webbrowser.open("http://localhost:5173")
 
-# Keep both processes running
+# Gracefully handle termination
+def cleanup(signum, frame):
+    print("\n🛑 Shutting down processes...")
+    backend_process.terminate()
+    frontend_process.terminate()
+    exit(0)
+
+signal.signal(signal.SIGINT, cleanup)  # Handle Ctrl+C
+signal.signal(signal.SIGTERM, cleanup)  # Handle termination signals
+
+# Keep processes running
 backend_process.wait()
 frontend_process.wait()
