@@ -35,8 +35,19 @@ frontend_process = subprocess.Popen(
 
 # Wait before opening the browser
 time.sleep(5)
-print("🌍 Opening http://localhost:5173 in the browser...")
-webbrowser.open("http://localhost:5173")
+print("🌍 Opening http://localhost:5173 in fullscreen...")
+
+# Open browser in fullscreen (modify based on the browser available)
+try:
+    subprocess.Popen(["chromium-browser", "--kiosk", "http://localhost:5173"])  # For Raspberry Pi / Linux
+except FileNotFoundError:
+    try:
+        subprocess.Popen(["google-chrome", "--kiosk", "http://localhost:5173"])  # For Chrome
+    except FileNotFoundError:
+        try:
+            subprocess.Popen(["firefox", "--kiosk", "http://localhost:5173"])  # For Firefox
+        except FileNotFoundError:
+            webbrowser.open("http://localhost:5173")  # Fallback
 
 # Gracefully handle termination
 def cleanup(signum, frame):
