@@ -4,8 +4,8 @@ import os
 import time
 
 # Paths
-backend_path = "gui/backend"
-frontend_path = "gui/frontend"
+backend_path = "gui\backend"
+frontend_path = "gui\frontend"
 venv_activate = os.path.join(backend_path, "venv", "bin", "activate")
 
 # Start FastAPI Backend with venv
