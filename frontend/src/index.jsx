@@ -8,7 +8,7 @@ import './style.css';
 export function App() {
 	return (
 		<LocationProvider>
-			<main class='h-[100vh] w-[100wh] bg-[#8A8A8A] flex flex-col justify-center items-center'>
+			<main class='h-[100vh] w-[100wh] bg-[#111111] flex flex-col justify-center items-center'>
 				<Router>
 					<Route path="/" component={Home} />
 					<Route default component={NotFound} />

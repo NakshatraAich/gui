@@ -40,7 +40,7 @@ export function Home() {
     useEffect(() => {
         const interval = setInterval(() => {
             setCapacity((prev) => (Math.floor(prev > 0 ? prev - 1 : 0)));
-        }, (25*60*60*1000)/100); // Decrease every second
+        }, (25*1000)/100); // Decrease every second
 
         return () => clearInterval(interval);
     }, []);
@@ -58,31 +58,40 @@ export function Home() {
 
     return (
         <div className="home h-[320px] w-[480px] bg-black flex flex-col text-white">
-            <div className="flex flex-row justify-between items-center p-4 border-b border-[#1d1d1d]">
-                <img src={logo} className="h-7 w-auto"/>
-                <div className="custom-font font-semibold text-xl">AL 500</div>
+
+            <div className=" flex flex-row w-full justify-start gap-3 py-4 px-4">
+                <div className="self-center"><img src={logo} className="h-5"/></div>
+                <div className="p-[0.5px] bg-[#1D1D1D] h-full"></div>
+                <div className="text-[14px] text-white font-bold self-center custom-font">AL <span className="text-[#]">500</span></div>
             </div>
 
-            <div className="p-4 mt-8 flex flex-col flex-stretch h-full gap-4">
-                <div className="flex flex-row justify-between items-end"> 
-                    <div className="custom-font text-[100px] leading-[80px] font-bold">{capacity}%</div>
-                    <div className="font-semibold text-xl leading-[15px]">{hrs}:{mins}:{secs}</div>
+            <div className="flex-stretch py-2 px-4 h-full flex flex-row gap-4">
+                <div className="flex flex-col w-[240px] shrink-0 items-center justify-center gap-1">
+                    <div className="text-7xl font-bold">{capacity}%</div>
+                    <div className="w-full p-1 rounded-full my-4 mx-16 relative">
+                        <div className="absolute bg-[#B5D411] h-full top-0 left-0 rounded-l-full" style={{ width: `${capacity}%` }}></div>
+                        <div className="absolute bg-[#1D1D1D] h-full top-0 right-0 rounded-r-full" style={{ width: `${100 - capacity}%` }}></div>
+                    </div>
                 </div>
-            
-            <div className="relative p-[10px] w-full">
-                <div className="absolute top-0 right-0 bg-gradient-to-r from-[#B5D411] to-[#8BAA10] h-full" style={{ width: `${capacity}%` }}></div>
-                <div className="absolute top-0 left-0 bg-[#1D1D1D] h-full" style={{ width: `${100 - capacity}%` }}></div>
-            </div>
-                
-                <div className="font-semibold text-sm leading-[15px]">
-                    OUTPUT: 30W
+                <div className="p-[0.5px] bg-[#1D1D1D] h-full"></div>
+                <div className="flex flex-col w-full justify-center">
+                    <div className="p-4">
+                        <div className="font-bold text-[#626262] text-sm">POWER</div>
+                        <div className="font-bold text-white text-3xl">100W</div>
+                    </div>
+                    <div className="p-[0.5px] bg-[#1D1D1D] w-full"></div>
+                    <div className="p-4">
+                        <div className="font-bold text-[#626262] text-sm">TIME ELAPSED</div>
+                        <div className="font-bold text-white text-3xl">{hrs}:{mins}:{secs}</div>
+                    </div>
                 </div>
             </div>
 
-            <div className="col-start-1 col-end-9 row-start-10 row-end-11 rounded-sm text-[#626262] flex flex-row w-full justify-between border-t border-[#1d1d1d] py-2 px-4">
+            <div className="rounded-sm text-[#626262] flex flex-row w-full justify-between py-4 px-4">
                 <div className="text-[10px] font-bold tracking-wider self-center">{dateTime.date.toUpperCase()}</div>
                 <div className="text-[10px] font-bold self-center">{dateTime.time}</div>
             </div>
+
         </div>
     );
 }
