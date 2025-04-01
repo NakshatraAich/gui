@@ -1,1 +1,24 @@
 @import "tailwindcss";
+@tailwind utilities;
+
+@font-face {
+    font-family: 'Inter';
+    src: url('./assets/Inter.ttf') format('truetype'); /* Correct format */
+    font-weight: 100 900; 
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Orbitron';
+    src: url('./assets/Orbitron.ttf') format('truetype'); /* Correct file */
+    font-weight: 100 900; 
+    font-display: swap;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+.custom-font {
+    font-family: 'Orbitron', display;
+}
