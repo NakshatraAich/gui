@@ -5,44 +5,42 @@ import threading
 
 app = FastAPI()
 
-# Allow requests from frontend (Vite server on port 5173)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Change to ["http://localhost:5173"] for security
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all methods (GET, POST, etc.)
-    allow_headers=["*"],  # Allow all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-SERIAL_PORT = "/dev/ttyUSB0"
+SERIAL_PORT = "COM6"#"/dev/ttyUSB0"
 BAUD_RATE = 9600
-ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
 
-data = ""
+try:
+    ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
+except Exception as e:
+    print(f"Error opening serial port: {e}")
+    ser = None
 
-import json
+data = {"power": 0.0}
 
 def read_serial():
     global data
-    while True:
+    while ser:
         try:
             line = ser.readline().decode(errors='ignore').strip()
             if line:
-                values = line.split(",")
-                if len(values) == 4:  # Ensure exactly 4 motor states
-                    data = {
-                        "motor1": int(values[0]),
-                        "motor2": int(values[1]),
-                        "motor3": int(values[2]),
-                        "motor4": int(values[3])
-                    }
-                else:
-                    data = {"raw": line}  # Store raw data if parsing fails
+                try:
+                    power_value = float(line)  # Convert to float instead of int
+                    data = {"power": round(power_value, 2)}  # Store as float with 2 decimal places
+                except ValueError:
+                    print(f"Invalid data received: {line}")  # Debugging
         except Exception as e:
             print(f"Serial Error: {e}")
 
-threading.Thread(target=read_serial, daemon=True).start()
+if ser:
+    threading.Thread(target=read_serial, daemon=True).start()
 
 @app.get("/data")
 def get_data():
-    return {"serial_data": data}
+    return data
